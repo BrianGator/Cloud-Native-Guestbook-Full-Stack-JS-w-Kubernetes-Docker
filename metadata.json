@@ -1,0 +1,8 @@
+{
+  "name": "Cloud Native Guestbook",
+  "description": "A full-stack guestbook application with Kubernetes deployment artifacts and Docker configurations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
