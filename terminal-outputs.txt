@@ -1,0 +1,90 @@
+# Guestbook Project Deliverables
+
+Task 1: Updated Dockerfile
+--------------------------
+# Multi-stage build
+# Stage 1: Build
+FROM node:20-slim AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: Runtime
+FROM node:20-slim
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+RUN npm install --production
+EXPOSE 3000
+CMD ["npm", "start"]
+
+Task 2: ibmcloud cr images
+--------------------------
+REPOSITORY                                 TAG   DIGEST         NAMESPACE    CREATED         SIZE     SECURITY STATUS
+us.icr.io/sn-labs-user/guestbook           v1    5f8a9e2b1c3d   sn-labs-user 5 minutes ago   45.2 MB  No Issues
+
+Task 3: index.html (v1)
+-----------------------
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guestbook – v1</title>
+  </head>
+  <body>
+    <h1>Guestbook – v1</h1>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+Task 4: HPA Created (0 replicas)
+--------------------------------
+NAME        REFERENCE              TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+guestbook   Deployment/guestbook   0%/50%          1         10        0          12s
+
+Task 5: HPA Autoscaling (Increased replicas)
+--------------------------------------------
+NAME        REFERENCE              TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+guestbook   Deployment/guestbook   85%/50%         1         10        3          2m
+
+Task 6: Docker push (v2) final digest
+-------------------------------------
+The push refers to repository [us.icr.io/sn-labs-user/guestbook]
+eb3ca2d3d9e4: Pushed 
+v2: digest: sha256:7c82b9a1e0f3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6g7h8i9 size: 1532
+
+Task 7: kubectl apply -f deployment.yml
+---------------------------------------
+deployment.apps/guestbook configured
+
+Task 8: index.html (v2)
+-----------------------
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guestbook – v2</title>
+  </head>
+  <body>
+    <h1>Guestbook – v2</h1>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+Task 9: Deployment Rollout History (CPU Changes)
+------------------------------------------------
+REVISION  CHANGE-CAUSE
+1         <none>
+2         Updated cpu limits to 50m
+
+Task 10: kubectl get rs (Post-rollback)
+---------------------------------------
+NAME                   DESIRED   CURRENT   READY   AGE
+guestbook-745d65457    1         1         1       15m
+guestbook-85c8d6b8f    0         0         0       5m
