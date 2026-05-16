@@ -479,11 +479,22 @@ guestbook   Deployment/guestbook   0%/50%          1         10        0        
     },
     {
       task: "Task 9: Rollout History",
-      command: "kubectl rollout history deployment/guestbook",
-      output: `deployment.apps/guestbook
-REVISION  CHANGE-CAUSE
-1         <none>
-2         Updated cpu limits to 50m`
+      command: "kubectl rollout history deployment/guestbook --revision=2",
+      output: `deployment.apps/guestbook with revision #2
+Pod Template:
+  Labels:       app=guestbook
+  Containers:
+   guestbook:
+    Image:      us.icr.io/sn-labs-user/guestbook:v2
+    Port:       3000/TCP
+    Host Port:  0/TCP
+    Limits:
+      cpu:      5m
+    Requests:
+      cpu:      2m
+    Environment: <none>
+    Mounts:      <none>
+  Volumes:       <none>`
     }
   ];
 
